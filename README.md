@@ -189,11 +189,20 @@ fusemoe_gen/
 │  │  ├─ __init__.py
 │  │  └─ engine.py
 └─ tests/
-   ├─ test_datasets.py
-   ├─ test_sparse_moe_fusion.py
-   ├─ test_ts_encoder.py
-   ├─ test_tabular_reconstruction.py
-   ├─ test_tabular_encoder.py
-   ├─ test_tabular_decoder.py
-   └─ test_training_engine.py 
+   ├─ pytests/
+   |  ├─ test_datasets.py
+   |  ├─ test_sparse_moe_fusion.py
+   |  ├─ test_ts_encoder.py
+   |  ├─ test_tabular_reconstruction.py
+   |  ├─ test_tabular_encoder.py
+   |  ├─ test_tabular_decoder.py
+   |  └─ test_training_engine.py 
+   └─ smokes/
+      ├─ test_datasets.py
+      ├─ test_sparse_moe_fusion.py
+      ├─ test_ts_encoder.py
+      ├─ test_tabular_reconstruction.py
+      ├─ test_tabular_encoder.py
+      ├─ test_tabular_decoder.py
+      └─ test_training_engine.py 
 ```
