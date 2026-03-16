@@ -144,11 +144,6 @@ fusemoe_gen/
 ├─ README.md
 ├─ requirements.txt
 ├─ LLM_CONTEXT.md
-├─ smokeTest.py
-├─ smokeFusion.py
-├─ smokeTabDecoder.py
-├─ smokePosterior.py
-├─ smoke_train_step_.py
 ├─ data/
 │  ├─ generate_synthetic_ts_tab.py
 │  ├─ raw/
