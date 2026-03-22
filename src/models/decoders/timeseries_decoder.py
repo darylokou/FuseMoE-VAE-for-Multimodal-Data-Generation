@@ -104,7 +104,7 @@ class TSIrregularDecoder(nn.Module):
             base = torch.linspace(0.0, 1.0, self.default_seq_len, device=z.device, dtype=z.dtype)
             times = base.unsqueeze(0).expand(batch_size, -1)
         elif times.dim() != 2 or times.size(0) != batch_size:
-            raise ValueError("target_times / query_times must have shape (batch, seq_len)")
+            raise ValueError("target_times must have shape (batch, seq_len)")
         target_times = times
 
         seq_len = target_times.size(1)
