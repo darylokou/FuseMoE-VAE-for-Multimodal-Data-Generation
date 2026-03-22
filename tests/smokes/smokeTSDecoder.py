@@ -1,0 +1,96 @@
+import sys
+from pathlib import Path
+
+CURRENT = Path(__file__).resolve()
+for parent in [CURRENT.parent, *CURRENT.parents]:
+    src = parent / "src"
+    if src.exists():
+        if str(src) not in sys.path:
+            sys.path.insert(0, str(src))
+        break
+else:
+    raise FileNotFoundError("Could not find src directory")
+
+from data.datasets import make_synthetic_ts_tab_dataloader
+from models.encoders.ts_irregular import TSIrregularEncoder
+from models.encoders.tabular import TabularEncoder
+from models.fusion.sparse_moe import FuseMoEFusion
+from models.latent.posterior import PosteriorHead
+from models.decoders.timeseries_decoder import TSIrregularDecoder
+
+def main():
+    print("Loading synthetic data...")
+    loader = make_synthetic_ts_tab_dataloader(
+        "data/processed/synthetic_ts_tab/train.pkl",
+        batch_size=8,
+        shuffle=False,
+    )
+    batch = next(iter(loader))
+
+    print("Initializing modules...")
+    ts_encoder = TSIrregularEncoder(
+        input_dim=batch["ts_values"].shape[-1],
+        hidden_dim=32,
+        embed_time=16,
+        num_heads=4,
+        num_query_steps=12,
+    )
+
+    tab_encoder = TabularEncoder(
+        num_numeric_features=batch["tab_num"].shape[-1],
+        categorical_cardinalities=[3, 4],
+        hidden_dims=(32,),
+        output_dim=32,
+    )
+
+    fusion = FuseMoEFusion(
+        modality_dims={"ts": 32, "tab": 32},
+        model_dim=32,
+        num_experts=4,
+        top_k=2,
+        router_type="joint",
+    )
+
+    posterior = PosteriorHead(
+        input_dim=32,
+        latent_dim=8,
+    )
+
+    ts_decoder = TSIrregularDecoder(
+        latent_dim=8,
+        output_dim=batch["ts_values"].shape[-1],
+        embed_time=16,
+        hidden_dims=(32, 32),
+        default_seq_len=batch["ts_values"].shape[1],
+    )
+
+    print("Running forward pass up to posterior...")
+    ts_out = ts_encoder(
+        values=batch["ts_values"],
+        mask=batch["ts_mask"],
+        times=batch["ts_times"],
+    )
+    tab_out = tab_encoder(
+        num_features=batch["tab_num"],
+        cat_features=batch["tab_cat"],
+    )
+
+    fused = fusion({"ts": ts_out["pooled"], "tab": tab_out})
+    post_out = posterior(fused["fused"])
+    z = post_out["z"]
+
+    print("Running TS Decoder...")
+    # Test 1: Let the decoder use its default internal target times
+    recon_default = ts_decoder(z=z)
+    
+    # Test 2: Condition the decoder on the exact timesteps from the batch
+    recon_custom = ts_decoder(z=z, target_times=batch["ts_times"])
+
+    print("\n--- Output Shapes ---")
+    print("z:                 ", z.shape)
+    print("recon_default:     ", recon_default["ts_recon"].shape)
+    print("recon_custom:      ", recon_custom["ts_recon"].shape)
+    print("recon_target_times:", recon_custom["target_times"].shape)
+
+if __name__ == "__main__":
+    main()

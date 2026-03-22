@@ -3,17 +3,6 @@ from pathlib import Path
 
 import torch
 
-
-def _add_src_to_path():
-    repo_root = Path(__file__).resolve().parents[1]
-    src_path = repo_root / "src"
-    if not src_path.exists():
-        raise FileNotFoundError(f"Could not find src directory at: {src_path}")
-    sys.path.insert(0, str(src_path))
-
-
-_add_src_to_path()
-
 from models.decoders.tabular_decoder import TabularDecoder
 from models.encoders.tabular import TabularEncoder
 from models.encoders.ts_irregular import TSIrregularEncoder

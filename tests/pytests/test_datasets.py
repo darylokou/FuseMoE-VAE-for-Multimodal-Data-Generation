@@ -5,24 +5,7 @@ from pathlib import Path
 
 import torch
 
-
-def _load_datasets_module():
-    repo_root = Path(__file__).resolve().parents[1]
-    module_path = repo_root / "src" / "data" / "datasets.py"
-    if not module_path.exists():
-        raise FileNotFoundError(f"Could not find datasets module at: {module_path}")
-
-    spec = importlib.util.spec_from_file_location("datasets_mod", module_path)
-    module = importlib.util.module_from_spec(spec)
-    assert spec.loader is not None
-    spec.loader.exec_module(module)
-    return module
-
-
-datasets_mod = _load_datasets_module()
-SyntheticTsTabDataset = datasets_mod.SyntheticTsTabDataset
-synthetic_ts_tab_collate_fn = datasets_mod.synthetic_ts_tab_collate_fn
-make_synthetic_ts_tab_dataloader = datasets_mod.make_synthetic_ts_tab_dataloader
+from data.datasets import SyntheticTsTabDataset, synthetic_ts_tab_collate_fn, make_synthetic_ts_tab_dataloader
 
 
 def _write_tiny_pickle(tmp_path: Path):

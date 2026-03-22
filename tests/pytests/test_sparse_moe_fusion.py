@@ -3,23 +3,7 @@ import sys
 
 import torch
 
-
-def _load_fusion_class():
-    repo_root = Path(__file__).resolve().parents[1]
-    src_path = repo_root / "src"
-
-    if not src_path.exists():
-        raise FileNotFoundError(f"Could not find src directory at: {src_path}")
-
-    sys.path.insert(0, str(src_path))
-
-    # from src.models.fusion.sparse_moe import FuseMoEFusion
-    from models.fusion.sparse_moe import FuseMoEFusion
-    return FuseMoEFusion
-
-
-FuseMoEFusion = _load_fusion_class()
-
+from models.fusion.sparse_moe import FuseMoEFusion
 
 def _make_inputs(batch_size=4, model_dim=32):
     torch.manual_seed(0)

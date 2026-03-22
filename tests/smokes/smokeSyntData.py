@@ -1,6 +1,19 @@
-from src.data.datasets import make_synthetic_ts_tab_dataloader
-from src.models.encoders.ts_irregular import TSIrregularEncoder
-from src.models.encoders.tabular import TabularEncoder
+import sys
+from pathlib import Path
+
+CURRENT = Path(__file__).resolve()
+for parent in [CURRENT.parent, *CURRENT.parents]:
+    src = parent / "src"
+    if src.exists():
+        if str(src) not in sys.path:
+            sys.path.insert(0, str(src))
+        break
+else:
+    raise FileNotFoundError("Could not find src directory")
+
+from data.datasets import make_synthetic_ts_tab_dataloader
+from models.encoders.ts_irregular import TSIrregularEncoder
+from models.encoders.tabular import TabularEncoder
 
 # 1) Build dataloader
 loader = make_synthetic_ts_tab_dataloader(

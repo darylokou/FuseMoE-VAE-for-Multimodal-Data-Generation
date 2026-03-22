@@ -5,22 +5,7 @@ from pathlib import Path
 import pytest
 import torch
 
-
-def _load_encoder_class():
-    repo_root = Path(__file__).resolve().parents[1]
-    module_path = repo_root / "src" / "models" / "encoders" / "tabular.py"
-    if not module_path.exists():
-        raise FileNotFoundError(f"Could not find encoder file at: {module_path}")
-
-    spec = importlib.util.spec_from_file_location("tabular", module_path)
-    module = importlib.util.module_from_spec(spec)
-    assert spec.loader is not None
-    spec.loader.exec_module(module)
-    return module.TabularEncoder
-
-
-TabularEncoder = _load_encoder_class()
-
+from models.encoders.tabular import TabularEncoder
 
 def test_numeric_only_forward_shapes():
     encoder = TabularEncoder(

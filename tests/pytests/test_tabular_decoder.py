@@ -4,19 +4,7 @@ from pathlib import Path
 import pytest
 import torch
 
-
-def _load_decoder_class():
-    repo_root = Path(__file__).resolve().parents[1]
-    src_path = repo_root / "src"
-    if not src_path.exists():
-        raise FileNotFoundError(f"Could not find src directory at: {src_path}")
-
-    sys.path.insert(0, str(src_path))
-    from models.decoders.tabular_decoder import TabularDecoder
-    return TabularDecoder
-
-
-TabularDecoder = _load_decoder_class()
+from models.decoders.tabular_decoder import TabularDecoder
 
 
 def test_numeric_only_decoder_forward():

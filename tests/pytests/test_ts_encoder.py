@@ -5,23 +5,7 @@ from pathlib import Path
 import pytest
 import torch
 
-
-def _load_encoder_class():
-    repo_root = Path(__file__).resolve().parents[1]
-    module_path = repo_root / "src" / "models" / "encoders" / "ts_irregular.py"
-    
-    if not module_path.exists():
-        raise FileNotFoundError(f"Could not find encoder file at: {module_path}")
-
-    spec = importlib.util.spec_from_file_location("ts_irregular", module_path)
-    module = importlib.util.module_from_spec(spec)
-    assert spec.loader is not None
-    spec.loader.exec_module(module)
-    return module.TSIrregularEncoder
-
-
-TSIrregularEncoder = _load_encoder_class()
-
+from models.encoders.ts_irregular import TSIrregularEncoder  
 
 def _make_batch(batch_size=4, seq_len=12, input_dim=5):
     torch.manual_seed(0)
