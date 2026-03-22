@@ -11,6 +11,7 @@ for parent in [CURRENT.parent, *CURRENT.parents]:
 else:
     raise FileNotFoundError("Could not find src directory")
 
+import torch
 from data.datasets import make_synthetic_ts_tab_dataloader
 from models.encoders.ts_irregular import TSIrregularEncoder
 from models.encoders.tabular import TabularEncoder
@@ -70,10 +71,9 @@ def main():
         mask=batch["ts_mask"],
         times=batch["ts_times"],
     )
-    tab_out = tab_encoder(
-        num_features=batch["tab_num"],
-        cat_features=batch["tab_cat"],
-    )
+    
+    # FIX: Using positional arguments to avoid keyword mismatches
+    tab_out = tab_encoder(batch["tab_num"], batch["tab_cat"])
 
     fused = fusion({"ts": ts_out["pooled"], "tab": tab_out})
     post_out = posterior(fused["fused"])

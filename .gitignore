@@ -29,10 +29,6 @@ dist/
 .vscode/
 .idea/
 
-# Data (usually large)
-data/raw/
-data/processed/
-
 # Model checkpoints
 checkpoints/
 *.pt
